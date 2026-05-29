@@ -2,42 +2,34 @@ import { useState, useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
-import { 
-  CheckCircle2, 
-  Star, 
-  Users, 
-  TrendingUp, 
-  Shield, 
-  Zap, 
-  BarChart3, 
-  BookOpen, 
-  Clock, 
+import {
+  CheckCircle2,
+  Star,
+  Users,
+  TrendingUp,
+  Shield,
+  Zap,
+  BarChart3,
+  BookOpen,
+  Clock,
   Target,
   Menu,
   X,
   DollarSign,
   ArrowRight,
-  MessageCircle
+  MessageCircle,
+  Mail
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { useToast } from "@/hooks/use-toast";
 import { useScrollAnimation, useStaggeredAnimation } from "@/hooks/use-scroll-animation";
 import { useBrickAnimation } from "@/hooks/use-brick-animation";
-import { apiRequest } from "@/lib/queryClient";
-import { insertSubscriptionSchema, type InsertSubscription } from "@shared/schema";
 import ZheckerLogo from "@assets/image_1754239227889.png";
 import ZheckerDashboard from "../../../This_Image1.png";
 import ClassroomImage from "../../../Image_2.png";
+
+const CONTACT_EMAIL = "yuvrajsinghchauha@Zhecker.com";
 
 interface AnimatedSectionProps {
   children: React.ReactNode;
@@ -64,8 +56,7 @@ function AnimatedSection({ children, className = "" }: AnimatedSectionProps) {
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showPricing, setShowPricing] = useState(false);
-  const { toast } = useToast();
-  
+
   // Scroll animations
   const heroAnimation = useScrollAnimation(0.1);
   const featuresAnimation = useScrollAnimation(0.1);
@@ -73,43 +64,6 @@ export default function Home() {
   const subscribeAnimation = useScrollAnimation(0.1);
   const { ref: featureCardsRef, visibleItems: featureCardsVisible } = useStaggeredAnimation(6, 0.1);
   const { ref: brickAnimationRef, animationState, scatterPositions, initialPositions } = useBrickAnimation(7, 0.2);
-
-  const form = useForm<InsertSubscription>({
-    resolver: zodResolver(insertSubscriptionSchema),
-    defaultValues: {
-      instituteName: "",
-      instituteType: "",
-      contactPerson: "",
-      email: "",
-      phone: "",
-      message: "",
-    },
-  });
-
-  const subscriptionMutation = useMutation({
-    mutationFn: async (data: InsertSubscription) => {
-      const response = await apiRequest("POST", "/api/subscriptions", data);
-      return response.json();
-    },
-    onSuccess: () => {
-      toast({
-        title: "Subscription Successful!",
-        description: "Thank you for your interest. We'll contact you soon.",
-      });
-      form.reset();
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Submission Failed",
-        description: error.message || "Please try again later.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const onSubmit = (data: InsertSubscription) => {
-    subscriptionMutation.mutate(data);
-  };
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -585,164 +539,35 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection>
             <Card className="shadow-2xl neon-border backdrop-blur-sm bg-card/95 hover-lift">
-              <CardHeader className="text-center pb-10">
+              <CardHeader className="text-center pb-6">
                 <CardTitle className="text-4xl lg:text-5xl font-bold mb-6">
-                  Subscribe Your{" "}
-                  <span className="text-primary neon-text">Institution</span>
+                  Get in{" "}
+                  <span className="text-primary neon-text">Touch</span>
                 </CardTitle>
                 <p className="text-xl text-muted-foreground">
-                  Join hundreds of educational institutions already using Zhecker to revolutionize their assessment process
+                  Reach out to learn how Zhecker can transform assessments at your institution.
                 </p>
               </CardHeader>
-              
-              <CardContent>
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="instituteName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Institution Name *</FormLabel>
-                            <FormControl>
-                              <Input 
-                                placeholder="Enter your institution name" 
-                                {...field}
-                                className="focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <FormField
-                        control={form.control}
-                        name="instituteType"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Institution Type *</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200">
-                                  <SelectValue placeholder="Select type" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="university">University</SelectItem>
-                                <SelectItem value="college">College</SelectItem>
-                                <SelectItem value="school">School</SelectItem>
-                                <SelectItem value="training-center">Training Center</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
 
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="contactPerson"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Contact Person *</FormLabel>
-                            <FormControl>
-                              <Input 
-                                placeholder="Full name of contact person" 
-                                {...field}
-                                className="focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Email Address *</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="email" 
-                                placeholder="contact@institution.edu" 
-                                {...field}
-                                className="focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Phone Number *</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="tel" 
-                              placeholder="+91 9109140808" 
-                              {...field}
-                              className="focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="message"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Additional Requirements (Optional)</FormLabel>
-                          <FormControl>
-                            <Textarea 
-                              rows={4}
-                              placeholder="Tell us about your specific evaluation needs..." 
-                              {...field}
-                              className="focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="terms" required />
-                      <label htmlFor="terms" className="text-sm text-muted-foreground">
-                        I agree to the{" "}
-                        <button type="button" className="text-primary hover:underline">
-                          Terms of Service
-                        </button>{" "}
-                        and{" "}
-                        <button type="button" className="text-primary hover:underline">
-                          Privacy Policy
-                        </button>
-                      </label>
-                    </div>
-
-                    <Button 
-                      type="submit" 
-                      size="lg"
-                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold neon-glow hover:neon-glow-lg transition-all duration-300 transform hover:scale-[1.02] hover-lift"
-                      disabled={subscriptionMutation.isPending}
-                    >
-                      {subscriptionMutation.isPending ? "Subscribing..." : "Subscribe to Zhecker"}
-                    </Button>
-                  </form>
-                </Form>
+              <CardContent className="pb-12">
+                <div className="flex flex-col items-center gap-6">
+                  <a
+                    href={`mailto:${CONTACT_EMAIL}?subject=Zhecker%20enquiry`}
+                    className="text-lg text-primary hover:underline"
+                  >
+                    {CONTACT_EMAIL}
+                  </a>
+                  <Button
+                    asChild
+                    size="lg"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold neon-glow hover:neon-glow-lg transition-all duration-300 transform hover:scale-[1.02] hover-lift"
+                  >
+                    <a href={`mailto:${CONTACT_EMAIL}?subject=Zhecker%20enquiry`}>
+                      <Mail className="mr-2 h-5 w-5" />
+                      Email Us
+                    </a>
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </AnimatedSection>
